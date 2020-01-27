@@ -33,7 +33,7 @@ const reqRegister = async ({ username, password, phone }) => {
 };
 
 /* 封装登入响应 */
-const reqLogin = async ({ username, password }) => {
+const reqLogin = async ({ req,username, password }) => {
   /* 判断用户名是否存储过 */
   /* 去数据库中查找用户是否存在 */
   try {
@@ -45,17 +45,19 @@ const reqLogin = async ({ username, password }) => {
         message: "用户名不存在"
       });
     }
-
-    if (md5(password) !== result.password) {
+    if (md5(password) !== result.dataValues.password) {
       return new FailureModel({
         errCode: 3,
         message: "两次密码输入不一致"
       });
+    }else{
+      req.session.user = result.dataValues; // 将 数据存储session中
+      return new SucceedModel({
+        errCode: 0,
+        data: "登入成功"
+      });
     }
-    return new SucceedModel({
-      errCode: 0,
-      data: "登入成功"
-    });
+
   } catch (error) {
     return new FailureModel({
       errCode : 3,
