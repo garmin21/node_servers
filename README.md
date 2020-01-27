@@ -45,8 +45,9 @@
 * `views`视图层
 * `model`错误处理模块
 * `controller`通过数据库操作，生成响应数据
-* `middlewares`抽离单独的中间件模块
+* `middlewares`应用级中间件模块
 * `services` 操作数据库的方法
 * `routers` 路由封装模块
 * `redis`redis操作
 * `utils`工具函数
+

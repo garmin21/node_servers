@@ -1,32 +1,11 @@
 /**
- * @description 用于操作user数据
+ * @description 用于操作数据库，返回成功\失败的响应
  */
-const User = require("../db/model/user");
 const { SucceedModel, FailureModel } = require("../Model/index");
-
-/* 封装查询数据库方法 */
-const getUserInfo = async username => {
-  const result = await User.findOne({
-    where: {
-      username
-    },
-    attributer: ["username", "password"]
-  });
-
-  return result;
-};
-
-/* 封装存储数据库的方法 */
-const storeUserInfo = async ({ username, password, phone }) => {
-  await User.create({
-    username,
-    password,
-    phone
-  });
-};
+const { getUserInfo, storeUserInfo } = require("../services/user");
 
 /* 封装注册响应 */
-const reqRegister = async ({username,password,phone}) => {
+const reqRegister = async ({ username, password, phone }) => {
   /* 判断用户名是否存储过 */
   const result = await getUserInfo(username);
 
@@ -46,7 +25,7 @@ const reqRegister = async ({username,password,phone}) => {
 };
 
 /* 封装登入响应 */
-const reqLogin = async ({username,password}) => {
+const reqLogin = async ({ username, password }) => {
   /* 判断用户名是否存储过 */
   /* 去数据库中查找用户是否存在 */
   const result = await getUserInfo(username);
