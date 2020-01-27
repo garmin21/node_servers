@@ -1,6 +1,7 @@
 /**
  * @description 用于操作数据库，返回成功\失败的响应
  */
+const md5 = require('md5')
 const { SucceedModel, FailureModel } = require("../Model/index");
 const { getUserInfo, storeUserInfo } = require("../services/user");
 
@@ -45,7 +46,7 @@ const reqLogin = async ({ username, password }) => {
       });
     }
 
-    if (password !== result.password) {
+    if (md5(password) !== result.password) {
       return new FailureModel({
         errCode: 3,
         message: "两次密码输入不一致"

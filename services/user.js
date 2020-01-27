@@ -1,6 +1,7 @@
 /**
  * @description 用于操作数据库
  */
+const md5 = require('md5')
 const User = require("../db/model/user");
  /* 封装查询数据库方法 */
 const getUserInfo = async username => {
@@ -18,7 +19,7 @@ const getUserInfo = async username => {
   const storeUserInfo = async ({ username, password, phone }) => {
     await User.create({
       username,
-      password,
+      password : md5(password), // 对存储密码进行加密
       phone
     });
   };
