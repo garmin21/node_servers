@@ -41,7 +41,38 @@
     同样的明文加密后输出同样的密文
 
    加密：`md5(password)`
-
+   
+3. 但某些页面需要权限才能，访问，我们就必须有一种方式可以去访问页面，这样的话就必须知道，是哪个用户访问了，由此呢，就诞生的cookie 这个技术，`yarn add redis connect-redis express-session`
+    使用 `redis, session` 来帮助保存 cookie 用户信息,从而来知道用户有没有登入过
+    
+    ```js
+    配置 session:
+    const redis = require('redis');
+    const session = require("express-session");
+    const RedisStore = require("connect-redis")(session);
+    const redisClient = redis.createClient(6379, 'localhost'); // redis 默认端口为 6379
+    redisClient.on('error', err => {
+      if (err) {
+        console.log('redis出错了', err);
+      }
+    });
+    app.use(
+      session({
+        store: new RedisStore({
+          client: redisClient, // 存储 session 的数据库
+          ttl: 7 * 24 * 3600 // session 数据过期时间
+        }),
+        secret: "KA7}D{*vPb:>Twm%", // 参与 session_id 加密参数
+        resave: false, // 如果 session 的数据没有修改，就不会重新存储
+        saveUninitialized: false, // 如果 session 没有数据，就不会存储
+        cookie: {
+          httpOnly: true,
+          maxAge: 7 * 24 * 3600 * 1000
+        }
+      })
+    );
+    通过: req.session 存储用户信息
+    ```
 ### 项目目录结构
 
 * `serve.js `服务器入口文件
