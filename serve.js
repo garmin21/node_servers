@@ -1,7 +1,7 @@
 const express = require("express");
 
 const app = express();
-const User = require("./db/model/user");
+const {reqRegister,reqLogin} = require('./Controller/user')
 
 app.use(express.urlencoded({ extended: true }));
 // 解析POST请求体数据
@@ -39,51 +39,18 @@ app.use((req, res, next) => {
 app.post("/register", async (req, res) => {
   /* 获取表单数据 */
   const { username, password, phone } = req.body;
+  const result = await reqRegister({ username, password, phone });
+  res.json(result)
  
-  /* 判断用户名是否存储过 */
-  const result = await User.findOne({
-    where: {
-      username
-    },
-    attributer: ["username"]
-  });
-  if (result) {
-    res.send("用户名已存在");
-    return;
-  }
-  /* 校验成功后存储数据库 */
-  await User.create({
-    username,
-    password,
-    phone
-  });
-  res.send("用户注册成功");
 });
 
 /* 登入 */
 app.post("/login", async (req, res) => {
   /* 获取表单数据 */
   const { username, password } = req.body;
+  const result = await reqLogin({username,password});
+  res.json(result)
 
-
-  /* 去数据库中查找用户是否存在 */
-  const result = await User.findOne({
-    where: {
-      username
-    },
-    attributer: ["username", "password"]
-  });
-  if (!result) {
-    res.send("用户名不存在");
-    return;
-  }
-
-  if (password !== result.password) {
-    res.send("密码不正确");
-    return;
-  }
-
-  res.send("登入成功");
 });
 
 app.listen(8000, err => {
